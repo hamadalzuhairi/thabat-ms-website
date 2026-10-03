@@ -1,0 +1,6 @@
+.env*
+.vercel
+*.apk
+*.keystore
+*.jks
+README.md

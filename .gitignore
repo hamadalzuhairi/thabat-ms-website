@@ -5,6 +5,7 @@
 !/.gitignore
 !/README.md
 !/vercel.json
+!/.vercelignore
 
 !/website/
 /website/*
@@ -21,3 +22,4 @@
 *.keystore
 *.jks
 .env*
+.vercel
