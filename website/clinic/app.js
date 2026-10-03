@@ -128,7 +128,7 @@ function adaptLive(pt, data){
   return { p, s, st, alerts, alert: cur, ack };
 }
 function startLive(){
-  stopLive(true); MODE = "live"; ALL = []; const app = $("#app"); if(app) app.remove();
+  stopLive(true); MODE = "live"; ALL = []; S.viewed = {}; S.revealed = {}; LV.audit = []; const app = $("#app"); if(app) app.remove();   // each signed-in person gets their own view log
   const api = LV.api;
   api.listDoctors().then(d => { LV.doctors = d; rebuildLive(); }).catch(() => {});
   LV.stopList = api.watchPatients(list => {

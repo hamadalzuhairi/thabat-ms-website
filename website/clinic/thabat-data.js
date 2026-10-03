@@ -99,7 +99,8 @@ export async function addDoctor(name, email, password, role = "doctor") {
   const { initializeApp, deleteApp } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
   const second = initializeApp(app.options, "thabat-add-staff-" + Date.now());
   const secondAuth = A.getAuth(second);
-  if (auth.emulatorConfig) A.connectAuthEmulator(secondAuth, auth.emulatorConfig.url, { disableWarnings: true });
+  const ec = auth.emulatorConfig;   // {protocol, host, port}: there is no .url field
+  if (ec) A.connectAuthEmulator(secondAuth, `${ec.protocol}://${ec.host}${ec.port != null ? ":" + ec.port : ""}`, { disableWarnings: true });
   try {
     const cred = await A.createUserWithEmailAndPassword(secondAuth, email, password);
     await F.setDoc(F.doc(db, "staff", cred.user.uid), { role, name, email });

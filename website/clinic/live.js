@@ -8,7 +8,7 @@ const cfg = local && new URLSearchParams(location.search).get("emu") === "1" ? E
 const usable = !!(cfg && cfg.projectId && (!cfg.emulatorHost || local));
 let ok = false, api = null;
 if (usable) {
-  try { api = await import("./thabat-data.js"); ok = await api.init(cfg); } catch (e) { console.warn("Thabat test server not available:", e); ok = false; }
+  try { api = await import("./thabat-data.js?v=20261003d"); ok = await api.init(cfg); } catch (e) { console.warn("Thabat test server not available:", e); ok = false; }
 }
 window.THABAT_LIVE = { ok, api: ok ? api : null, emulator: !!(cfg && cfg.emulatorHost), projectId: cfg ? cfg.projectId : null };
 window.dispatchEvent(new Event("thabat-live"));
