@@ -1,0 +1,23 @@
+# Public repo for the Thabat MS website + clinic dashboard demo.
+# Everything is ignored by default; only the files the website needs are published.
+# Research notes, the starter-kit README (patent section), docs, design assets and keys stay private.
+/*
+!/.gitignore
+!/README.md
+!/vercel.json
+
+!/website/
+/website/*
+!/website/index.html
+!/website/js/
+!/website/assets/
+!/website/clinic/
+
+!/prototype/
+/prototype/*
+!/prototype/thabat-app-prototype.html
+
+*.apk
+*.keystore
+*.jks
+.env*
