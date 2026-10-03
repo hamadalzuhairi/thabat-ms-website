@@ -93,6 +93,7 @@ html.menu-open{overflow:hidden}
 html.menu-open header.top{background:var(--night);border-bottom-color:var(--night-line)}
 .mnav{position:fixed;inset:0;z-index:59;background:color-mix(in srgb,var(--night) 97%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--night-ink);overflow-y:auto;overscroll-behavior:contain;padding:calc(var(--hdr,112px) + 10px) 16px 32px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .22s var(--ease),transform .22s var(--ease),visibility 0s .22s}
 .mnav.open{opacity:1;visibility:visible;transform:none;transition:opacity .22s var(--ease),transform .22s var(--ease)}
+.mnav .mdl{display:flex;width:100%;max-width:560px;margin:0 auto 14px}
 .mnav ul{list-style:none;margin:0 auto;padding:0;max-width:560px;display:grid;gap:4px}
 .mnav a{display:flex;align-items:center;gap:14px;min-height:54px;padding:0 14px;border-radius:14px;color:var(--night-ink);text-decoration:none;font-weight:600;font-size:1.06rem;border:1px solid transparent}
 .mnav a:hover,.mnav a:focus-visible{background:rgba(255,255,255,.06);border-color:var(--night-line)}
@@ -950,6 +951,7 @@ footer h3{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#8
   </div>
 </header>
 <nav class="mnav" id="mnav" aria-label="Menu" aria-hidden="true" inert>
+  <a class="btn btn-primary mdl" href="#download"><svg class="ic" aria-hidden="true"><use href="#i-android"/></svg><span data-i="cta1">Download for Android</span></a>
   <ul>
     <li><a href="#how"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg><span data-i="navHow">How it works</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
     <li><a href="#signal"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg><span data-i="sigK">The signal</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
@@ -959,7 +961,6 @@ footer h3{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#8
     <li><a href="#features"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg><span data-i="ftK">Inside the app</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
     <li><a href="#privacy"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span data-i="navPriv">Privacy</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
     <li class="msep" role="presentation"></li>
-    <li><a href="#download"><svg class="ic" aria-hidden="true"><use href="#i-down"/></svg><span data-i="navDl">Download</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
     <li><a href="#install"><svg class="ic" aria-hidden="true"><use href="#i-android"/></svg><span data-i="navInstall">Install guide</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
     <li><a href="#faq"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><span data-i="navFaq">Questions</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
     <li><a href="clinic/"><svg class="ic" aria-hidden="true"><use href="#i-steth"/></svg><span data-i="navClinic">For clinics</span><svg class="go" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
