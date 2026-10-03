@@ -408,7 +408,7 @@ function shell(){
    </div></div><div id="overlay"></div>`;
   $("#leave").addEventListener("click", ev => { ev.preventDefault(); if(live()){ LV.api.signOut(); return; } S.entered = false; store.set("entered", false); location.hash = ""; render(); });
   $("#menuBtn").addEventListener("click", () => { const a = $("#app"); const open = !a.classList.contains("navopen"); a.classList.toggle("navopen", open); $("#menuBtn").setAttribute("aria-expanded", String(open)); if(open) $("#nav a").focus(); });
-  $("#app").addEventListener("click", ev => { const a = $("#app"); if(a.classList.contains("navopen") && (ev.target === a || ev.target.closest(".nav a"))){ a.classList.remove("navopen"); $("#menuBtn").setAttribute("aria-expanded","false"); } });
+  $("#app").addEventListener("click", ev => { const a = $("#app"); if(a && a.classList.contains("navopen") && (ev.target === a || ev.target.closest(".nav a"))){ a.classList.remove("navopen"); $("#menuBtn").setAttribute("aria-expanded","false"); } });
   $("#q").addEventListener("input", ev => { S.q = ev.target.value.trim(); if(route().r !== "patients"){ location.hash = "#/patients"; } else renderTable(); });
 }
 function refreshChrome(r){
