@@ -15,6 +15,14 @@
  *   await Thabat.assignDoctor(uid, doctorUid, displayName); // admin only
  *   await Thabat.acknowledgeAlert(uid, startedOn, note);
  *   Thabat.toDashboardShape(data)                            // → the {p, s, st} shape of website/clinic/data.js
+ *
+ * toDashboardShape returns:
+ *   p  = {id, code, name, doctorId, status, language, kinds, lastSeenAt, simulated, appVersion, usual}
+ *   s  = [{d: Date, day: "yyyy-mm-dd", ms|null, usual, line, state, pv, sr, taps, tapsByType, msByType, monitoredMinutes, doses}]
+ *        pv / sr = preventive / symptom-relief dose mark for the day: "T" taken, "L" late, "N" not taken, null no answer
+ *   st = {st: "alert|watch|good|learn|none", days, paused}
+ *   alerts = [{id, startedOn, days, state: "open|acknowledged", acknowledgedBy, ackAt, note, simulated}]
+ * Anything shown with simulated = true must carry the "Simulated data" label (CLAUDE.md rule 6).
  */
 
 const V = "12.19.0";
@@ -63,7 +71,7 @@ export function watchPatients(cb) {
 }
 
 /** Live data for one patient: the record plus days (oldest first), doses and alerts. */
-export function watchPatient(uid, cb) {
+export function watchPatient(uid, cb, opts = {}) {
   const data = { patient: null, days: [], doses: [], alerts: [] };
   const push = () => cb({ ...data });
   const base = F.doc(db, "patients", uid);
@@ -73,7 +81,7 @@ export function watchPatient(uid, cb) {
     F.onSnapshot(F.collection(base, "doses"), (s) => { data.doses = s.docs.map((d) => d.data()); push(); }),
     F.onSnapshot(F.collection(base, "alerts"), (s) => { data.alerts = s.docs.map((d) => ({ id: d.id, ...d.data() })); push(); }),
   ];
-  logAudit("view_patient", uid);
+  if (opts.audit !== false) logAudit("view_patient", uid);   // the clinic list subscribes with {audit:false}; opening a patient logs the view
   return () => stops.forEach((f) => f());
 }
 
@@ -147,8 +155,16 @@ export function toDashboardShape({ patient, days, doses, alerts }) {
   };
   const dosesByDay = {};
   for (const d of doses) (dosesByDay[d.day] = dosesByDay[d.day] || []).push(d);
+  // One mark per day per treatment kind, like the dose row on the patient's chart: T taken, L late, N not taken.
+  const mark = (list, kind) => {
+    const xs = list.filter((x) => x.kind === kind).map((x) => x.status);
+    return xs.includes("NOT_TAKEN") ? "N" : xs.includes("LATE") ? "L" : xs.includes("TAKEN") ? "T" : null;
+  };
   const s = days.map((d) => ({
-    d: d.day,
+    d: new Date(d.day + "T00:00:00"),
+    day: d.day,
+    pv: mark(dosesByDay[d.day] || [], "PREVENTIVE"),
+    sr: mark(dosesByDay[d.day] || [], "SYMPTOM_RELIEF"),
     ms: d.medianGapMs ?? null,
     usual: d.usualMs ?? null,
     line: d.lineMs ?? null,
@@ -164,6 +180,7 @@ export function toDashboardShape({ patient, days, doses, alerts }) {
     doctorId: patient.doctorId || null, status: patient.status, language: patient.language,
     kinds: patient.treatmentKinds || [], lastSeenAt: patient.lastSeenAt, simulated: !!patient.simulated,
     appVersion: patient.appVersion,
+    usual: [...days].reverse().find((d) => d.usualMs != null)?.usualMs ?? null,
   } : null;
   return { p, s, st, alerts };
 }

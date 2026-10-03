@@ -51,6 +51,8 @@
 <script type="module">
   import * as T from "./thabat-data.js";
   const $ = (s) => document.querySelector(s);
+  // Everything that came from the database is escaped before it goes into the page.
+  const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   let doctors = [], stopList = null, stopDetail = null;
 
   if (!(await T.init(window.THABAT_FIREBASE))) { $("#who").textContent = "No firebase-config.js"; }
@@ -73,13 +75,13 @@
     for (const p of list) {
       const tr = document.createElement("tr");
       const doc = doctors.find((d) => d.uid === p.doctorId);
-      tr.innerHTML = `<td><code>${p.code}</code>${p.simulated ? ' <span class="muted">simulated</span>' : ""}</td>
-        <td>${p.displayName || "—"}</td><td>${p.status}</td><td>${doc ? doc.name : (p.doctorId ? "assigned" : "—")}</td>
+      tr.innerHTML = `<td><code>${esc(p.code)}</code>${p.simulated ? ' <span class="muted">simulated</span>' : ""}</td>
+        <td>${esc(p.displayName || "—")}</td><td>${esc(p.status)}</td><td>${esc(doc ? doc.name : (p.doctorId ? "assigned" : "—"))}</td>
         <td class="muted">${p.lastSeenAt ? new Date(p.lastSeenAt).toLocaleString() : ""}</td><td></td>`;
       const cell = tr.lastElementChild;
       if (me.role === "admin") {
         const sel = document.createElement("select");
-        sel.innerHTML = `<option value="">Assign doctor…</option>` + doctors.map((d) => `<option value="${d.uid}" ${d.uid === p.doctorId ? "selected" : ""}>${d.name}</option>`).join("");
+        sel.innerHTML = `<option value="">Assign doctor…</option>` + doctors.map((d) => `<option value="${esc(d.uid)}" ${d.uid === p.doctorId ? "selected" : ""}>${esc(d.name)}</option>`).join("");
         const name = document.createElement("input"); name.placeholder = "Test name"; name.value = p.displayName || ""; name.size = 10;
         const b = document.createElement("button"); b.textContent = "Save";
         b.onclick = () => sel.value && T.assignDoctor(p.uid, sel.value, name.value || null);
@@ -97,12 +99,12 @@
     stopDetail = T.watchPatient(uid, (data) => {
       const v = T.toDashboardShape(data);
       $("#dtitle").textContent = `${v.p ? v.p.name : uid} · ${v.p ? v.p.code : ""}${v.p && v.p.simulated ? " · Simulated data" : ""}`;
-      $("#dstate").innerHTML = `Status: <b class="${v.st.st === "alert" ? "alert" : ""}">${v.st.st}</b>${v.st.days ? ` (${v.st.days} slower days)` : ""}${v.st.paused ? " · monitoring paused" : ""}`;
+      $("#dstate").innerHTML = `Status: <b class="${v.st.st === "alert" ? "alert" : ""}">${esc(v.st.st)}</b>${v.st.days ? ` (${v.st.days} slower days)` : ""}${v.st.paused ? " · monitoring paused" : ""}`;
       $("#dalerts").innerHTML = "";
       for (const a of v.alerts) {
         const div = document.createElement("div");
         div.className = "row";
-        div.innerHTML = `<span class="${a.state === "open" ? "alert" : "ok"}">Alert from ${a.startedOn}, ${a.days} days: ${a.state}${a.note ? " — " + a.note : ""}</span>`;
+        div.innerHTML = `<span class="${a.state === "open" ? "alert" : "ok"}">Alert from ${esc(a.startedOn)}, ${esc(a.days)} days: ${esc(a.state)}${a.note ? " — " + esc(a.note) : ""}</span>`;
         if (a.state === "open") {
           const note = document.createElement("input"); note.placeholder = "Note";
           const b = document.createElement("button"); b.textContent = "Acknowledge";
@@ -112,7 +114,7 @@
         $("#dalerts").append(div);
       }
       $("#ddays").innerHTML = v.s.slice().reverse().map((d) =>
-        `<tr><td>${d.d}</td><td>${d.state}</td><td>${d.ms ?? "No data"}</td><td>${d.usual ?? ""}</td><td>${d.taps}</td><td>${d.monitoredMinutes}</td><td>${d.doses.map((x) => x.kind + " " + x.status).join(", ")}</td></tr>`).join("");
+        `<tr><td>${esc(d.day)}</td><td>${esc(d.state)}</td><td>${esc(d.ms ?? "No data")}</td><td>${esc(d.usual ?? "")}</td><td>${esc(d.taps)}</td><td>${esc(d.monitoredMinutes)}</td><td>${esc(d.doses.map((x) => x.kind + " " + x.status).join(", "))}</td></tr>`).join("");
     });
   }
 </script>

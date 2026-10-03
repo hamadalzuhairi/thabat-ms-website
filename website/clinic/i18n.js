@@ -220,3 +220,41 @@ ar:{
    notesHosp:(a,b)=>`أُعطي في المستشفى ${a} · التالي ${b}`},
  csv:["patient","status","days","latest_ms","usual_ms","reading","next_visit"],
 }};
+
+/* Test server (Firebase) and theme switch text. */
+Object.assign(window.I18N.en, {
+ theme:{toLight:"White background", toDark:"Dark background"},
+ live:{server:"Test server", emu:"Local test server", signinT:"Staff sign in", signinSub:"Test server: test data only, never real patients.",
+  email:"Email", password:"Password", signin:"Sign in", signing:"Signing in…", errCred:"Email or password is wrong.", errNet:"Couldn't reach the test server. Check your connection and try again.",
+  noRole:"This account isn't set up as clinic staff yet. Ask the admin to add it.", or:"or", demo:"Open the demo with simulated patients",
+  notReady:"The test server isn't connected on this site yet, so only the demo is available.", connecting:"Connecting to the test server…",
+  admin:"Admin", doctorRole:"Doctor", unassigned:"Unassigned", assign:"Assign doctor", assignT:"Assign to a doctor", doctorL:"Doctor", chooseDoc:"Choose a doctor",
+  nameL:"Test name (optional)", nameHelp:"Test data only. Never type a real patient's name.", save:"Save", assigned:id=>`${id} assigned`,
+  staff:"Staff", staffSub:"Doctors who can sign in. Each doctor sees only the patients assigned to them.", addDoc:"Add doctor", docName:"Name",
+  tempPw:"Temporary password", tempHelp:"At least 6 characters. Share it with the doctor privately.", added:n=>`${n} added`, noDocs:"No doctors yet.",
+  errDoc:"Choose a doctor.", errName:"Add the doctor's name.", errEmail:"Add a valid email.", errPw:"Use at least 6 characters.", errExists:"This email already has an account.",
+  auditNote:"This list shows what you did in this session. The full audit log is kept on the test server, where admins can read it.",
+  formsNote:"Relapse forms are saved in this browser only for now.", saveErr:"Couldn't save. Check your connection and try again.",
+  noAlertDoc:"There is no alert record for this episode on the server.", testData:"Test data", noDays:"No daily summaries from this phone yet.",
+  lastSeen:"Last seen", code:"Phone code", demoMode:"Demo", liveMode:"Test server", switchDemo:"Open demo", signOut:"Sign out",
+  appV:v=>`Android · app ${v}`, noKinds:"No treatments recorded", unassignedRead:"Waiting for a doctor", byDoctor:n=>`Doctor: ${n}`,
+  noteFound:"Found", noteSteps:"Next steps", meds:{PREVENTIVE:"Preventive",SYMPTOM_RELIEF:"Symptom relief"}, patientsOnServer:n=>`${n} on the test server`}
+});
+Object.assign(window.I18N.ar, {
+ theme:{toLight:"خلفية بيضاء", toDark:"خلفية داكنة"},
+ live:{server:"خادم الاختبار", emu:"خادم اختبار محلي", signinT:"دخول الفريق الطبي", signinSub:"خادم الاختبار: بيانات اختبار فقط، وليست لمرضى حقيقيين.",
+  email:"البريد الإلكتروني", password:"كلمة المرور", signin:"دخول", signing:"جارٍ الدخول…", errCred:"البريد أو كلمة المرور غير صحيحة.", errNet:"تعذّر الوصول إلى خادم الاختبار. تحقق من الاتصال وحاول مجددًا.",
+  noRole:"هذا الحساب غير مضاف إلى فريق العيادة بعد. اطلب من المشرف إضافته.", or:"أو", demo:"افتح العرض بمرضى تجريبيين",
+  notReady:"خادم الاختبار غير متصل بهذا الموقع بعد، لذا يتوفر العرض التجريبي فقط.", connecting:"جارٍ الاتصال بخادم الاختبار…",
+  admin:"مشرف", doctorRole:"طبيب", unassigned:"غير مُسنَد", assign:"إسناد إلى طبيب", assignT:"إسناد المريض إلى طبيب", doctorL:"الطبيب", chooseDoc:"اختر طبيبًا",
+  nameL:"اسم تجريبي (اختياري)", nameHelp:"بيانات اختبار فقط. لا تكتب اسم مريض حقيقي.", save:"حفظ", assigned:id=>`تم إسناد ${id}`,
+  staff:"الفريق", staffSub:"الأطباء الذين يمكنهم الدخول. يرى كل طبيب المرضى المسندين إليه فقط.", addDoc:"إضافة طبيب", docName:"الاسم",
+  tempPw:"كلمة مرور مؤقتة", tempHelp:"6 أحرف على الأقل. شاركها مع الطبيب بشكل خاص.", added:n=>`تمت إضافة ${n}`, noDocs:"لا يوجد أطباء بعد.",
+  errDoc:"اختر طبيبًا.", errName:"أضف اسم الطبيب.", errEmail:"أضف بريدًا صحيحًا.", errPw:"استخدم 6 أحرف على الأقل.", errExists:"لهذا البريد حساب بالفعل.",
+  auditNote:"تعرض هذه القائمة ما قمت به في هذه الجلسة. سجل التدقيق الكامل محفوظ على خادم الاختبار ويطّلع عليه المشرفون.",
+  formsNote:"تُحفظ نماذج الانتكاسة في هذا المتصفح فقط حاليًا.", saveErr:"تعذّر الحفظ. تحقق من الاتصال وحاول مجددًا.",
+  noAlertDoc:"لا يوجد سجل تنبيه لهذه النوبة على الخادم.", testData:"بيانات اختبار", noDays:"لم تصل ملخصات يومية من هذا الهاتف بعد.",
+  lastSeen:"آخر ظهور", code:"رمز الهاتف", demoMode:"عرض تجريبي", liveMode:"خادم الاختبار", switchDemo:"فتح العرض", signOut:"تسجيل الخروج",
+  appV:v=>`أندرويد · التطبيق ${v}`, noKinds:"لا علاجات مسجلة", unassignedRead:"بانتظار طبيب", byDoctor:n=>`الطبيب: ${n}`,
+  noteFound:"النتيجة", noteSteps:"الخطوات التالية", meds:{PREVENTIVE:"وقائي",SYMPTOM_RELIEF:"تخفيف الأعراض"}, patientsOnServer:n=>`${n} على خادم الاختبار`}
+});
