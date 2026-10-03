@@ -129,15 +129,16 @@ function mount(root,ctx){
     if(gaps.length<MIN_GAPS) return {few:true};
     const last=ev.at(-1), win=full?Math.max(last.t,1000):S.dur*1000, mins=win/60000;
     const ok=correct(last.v,tg), medRaw=median(gaps);
-    return {few:false, ev, tg, tl:S.tl, full, win, mins, medRaw, med:Math.round(medRaw), ok,
+    /* the comparison runs over the time they were actually typing (first to last key), so stopping early still shows the gap */
+    return {few:false, ev, tg, tl:S.tl, full, win, cw:Math.max(1000,last.t), mins, medRaw, med:Math.round(medRaw), ok,
       wpm:Math.round(ok/5/mins), cpm:Math.round(ok/mins), acc:last.v.length?Math.round(100*ok/last.v.length):0, keys:ev.length};
   }
   /* the text typed by time tau, with every gap stretched by k */
   function valueAt(r,tau,k){ let v=""; for(const e of r.ev){ if(e.t*k<=tau) v=e.v; else break; } return v; }
   function rel(r){
-    const k=1+S.pct/100, v=valueAt(r,r.win,k), ok=correct(v,r.tg);
-    let fit=0; for(const e of r.ev) if(e.t*k<=r.win) fit++;
-    return {k, med:Math.round(r.medRaw*k), ok, wpm:Math.round(ok/5/r.mins), cut:r.ev.length-fit};
+    const k=1+S.pct/100, v=valueAt(r,r.cw,k), ok=correct(v,r.tg);
+    let fit=0; for(const e of r.ev) if(e.t*k<=r.cw) fit++;
+    return {k, med:Math.round(r.medRaw*k), ok, wpm:r.ok?Math.round(r.wpm*ok/r.ok):0, cut:r.ev.length-fit};
   }
 
   /* ---------- results ---------- */
@@ -145,7 +146,7 @@ function mount(root,ctx){
     const r=S.res; if(!r){ res.hidden=true; return; }
     res.hidden=false;
     if(r.few){ res.innerHTML=`<div class="tt-few"><p>${t("ttTooFew")}</p><button type="button" class="btn btn-primary btn-sm tt-again">${icon("i-refresh")}<span>${t("ttAgain")}</span></button></div>`; return; }
-    const ar=r.tl==="ar", sec=Math.round(r.win/1000), ms=`<small>${t("msUnit")}</small>`, arrow=icon("i-arrow","flip");
+    const ar=r.tl==="ar", sec=Math.round(r.cw/1000), ms=`<small>${t("msUnit")}</small>`, arrow=icon("i-arrow","flip");
     res.innerHTML=`
     <div class="tt-rhead"><span class="tt-badge">${icon("i-check")}<span>${t(r.full?"ttFinished":"ttDone")}</span></span></div>
     <div class="tt-kpis">
@@ -183,7 +184,7 @@ function mount(root,ctx){
       <p class="tt-thabat">${icon("i-shield")}<span>${t("ttThabat")}</span></p>
     </div>
     <div class="tt-acts"><button type="button" class="btn btn-ghost btn-sm tt-replay-b">${icon("i-play")}<span>${t("ttReplay")}</span></button><button type="button" class="btn btn-primary btn-sm tt-again">${icon("i-refresh")}<span>${t("ttAgain")}</span></button></div>`;
-    upd(); frame(r.win);
+    upd(); frame(r.cw);
   }
   /* numbers that depend on the slider */
   function upd(){
@@ -195,13 +196,13 @@ function mount(root,ctx){
     q(".tb.rel .v").textContent=R.med;
     q(".tt-plus").textContent=fmt(t("ttPlus"),{ms:R.med-r.med});
     q(".vs-wpm").textContent=R.wpm; q(".vs-ok").textContent=num(R.ok);
-    q(".tt-cut").textContent=R.cut>0?fmt(t("ttCut"),{n:R.cut,s:Math.round(r.win/1000)}):"";
+    q(".tt-cut").textContent=R.cut>0?fmt(t("ttCut"),{n:R.cut,s:Math.round(r.cw/1000)}):"";
     q(".tt-slider output").textContent=`+${S.pct}%`;
     q("#ttPct").setAttribute("aria-valuetext",`+${S.pct}%`);
   }
   /* one replay frame at time tau (ms on the visitor's own clock) */
   function frame(tau){
-    const r=S.res; if(!r||r.few) return; S.tau=tau; const k=1+S.pct/100, w=r.win;
+    const r=S.res; if(!r||r.few) return; S.tau=tau; const k=1+S.pct/100, w=r.cw;
     let dy="", dr="";
     for(const e of r.ev){ if(e.t<=tau) dy+=`M${(e.t/w*1000).toFixed(1)} 4V28`; const x=e.t*k; if(x<=tau&&x<=w) dr+=`M${(x/w*1000).toFixed(1)} 4V28`; }
     q(".tl-row.you .tk").setAttribute("d",dy); q(".tl-row.rel .tk").setAttribute("d",dr);
@@ -215,10 +216,10 @@ function mount(root,ctx){
   }
   function replay(){
     const r=S.res; if(!r||r.few) return; cancelAnimationFrame(S.play);
-    if(ctx.rm){ frame(r.win); return; }
-    const D=Math.min(9000,Math.max(4000,r.win/3.5)), t0=performance.now();
+    if(ctx.rm){ frame(r.cw); return; }
+    const D=Math.min(9000,Math.max(4000,r.cw/3.5)), t0=performance.now();
     res.classList.add("playing");
-    const step=now=>{ const p=Math.min(1,(now-t0)/D); frame(p*r.win); if(p<1) S.play=requestAnimationFrame(step); else res.classList.remove("playing"); };
+    const step=now=>{ const p=Math.min(1,(now-t0)/D); frame(p*r.cw); if(p<1) S.play=requestAnimationFrame(step); else res.classList.remove("playing"); };
     S.play=requestAnimationFrame(step);
   }
 
@@ -234,7 +235,7 @@ function mount(root,ctx){
     q(".tt-cl").textContent=t("ttLeft");
     if(S.phase!=="done"){ drawText(inp.value); clock(S.phase==="run"?S.dur-(performance.now()-S.t0)/1000:null); }
     tape(); live();
-    if(S.res){ renderRes(); frame(S.tau||S.res.win); }
+    if(S.res){ renderRes(); frame(S.tau||S.res.cw); }
   }
 
   /* ---------- events ---------- */
@@ -254,7 +255,7 @@ function mount(root,ctx){
     else if(b.classList.contains("tt-restart")||b.classList.contains("tt-again")){ reset(true); root.scrollIntoView({behavior:ctx.rm?"auto":"smooth",block:"start"}); inp.focus({preventScroll:true}); }
     else if(b.classList.contains("tt-replay-b")) replay();
   });
-  root.addEventListener("input",e=>{ if(e.target.id!=="ttPct") return; S.pct=+e.target.value; cancelAnimationFrame(S.play); res.classList.remove("playing"); upd(); frame(S.res.win); });
+  root.addEventListener("input",e=>{ if(e.target.id!=="ttPct") return; S.pct=+e.target.value; cancelAnimationFrame(S.play); res.classList.remove("playing"); upd(); frame(S.res.cw); });
   ctx.onLang(()=>{ if(!S.chosen&&S.phase==="ready"&&S.tl!==ctx.lang()){ S.tl=ctx.lang(); inp.value=""; S.ev=[]; } paint(); });
 
   setPhase("ready"); paint();
