@@ -866,8 +866,6 @@ section.night .kicker{color:#8DBBFA}
 .note h3{font-size:1.02rem;margin-bottom:4px}
 .note p{color:var(--ink-2);font-size:.94rem}
 .qr{display:flex;gap:16px;align-items:center}
-.qr-box{width:136px;height:136px;flex:none;background:#fff;border-radius:16px;padding:8px;border:1px solid var(--line);display:grid;place-items:center}
-.qr-box img,.qr-box canvas{width:120px!important;height:120px!important}
 .ios-only{display:none}.device-ios .ios-only{display:flex}
 @media (max-width:900px){.dl{grid-template-columns:1fr}}
 
@@ -1150,7 +1148,6 @@ footer h3{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#8
       </div>
       <div class="side">
         <div class="note ios-only rv"><div class="ni"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg></div><div><h3 data-i="iosT"></h3><p data-i="iosB"></p></div></div>
-        <div class="note rv" id="qrNote"><div class="qr"><div class="qr-box" id="qr" aria-hidden="true"></div><div><h3 data-i="qrT"></h3><p data-i="qrB"></p></div></div></div>
         <div class="note rv" style="--d:1"><div class="ni"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></div><div><h3 data-i="whyT"></h3><p data-i="whyB"></p></div></div>
       </div>
     </div>
@@ -1249,7 +1246,6 @@ footer h3{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#8
 </svg>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/neuron3d.js"></script>
 <script src="js/visuals.js"></script>
 <script src="js/typetest.js"></script>
@@ -1568,8 +1564,7 @@ else{ const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersectin
 const ua=navigator.userAgent||"";
 const isIOS=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1), isAndroid=/Android/i.test(ua);
 if(isIOS) document.body.classList.add("device-ios");
-if(isAndroid||isIOS||!window.QRCode) $("#qrNote").hidden=true;
-else{ try{ new QRCode($("#qr"),{text:location.href.split("#")[0]+"#download",width:120,height:120,colorDark:"#0B1F3A",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M}); }catch(e){ $("#qrNote").hidden=true; } }
+/* (the "On a computer?" QR card was removed) */
 $("#verNum").textContent=APP.version; $("#dlBtn").setAttribute("href",APP.file);
 async function apkAvailable(){ try{ const r=await fetch(APP.file,{method:"HEAD",cache:"no-store"}); return r.ok; }catch(e){ return false; } }
 $("#codeForm").addEventListener("submit",async e=>{
