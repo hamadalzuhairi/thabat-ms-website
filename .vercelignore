@@ -5,3 +5,5 @@
 *.jks
 README.md
 website/clinic/connect-test.html
+# Serve the Android app download (only this file).
+!website/downloads/thabat-ms.apk
