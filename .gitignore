@@ -6,6 +6,7 @@
 !/README.md
 !/vercel.json
 !/.vercelignore
+!/.github/
 
 !/website/
 /website/*
