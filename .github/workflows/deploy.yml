@@ -1,5 +1,6 @@
 # Deploys the site to Vercel (account hamad_alzuhairi20@hotmail.com, team LOCALI) on every push to main.
-# Needs the repository secret VERCEL_TOKEN (a Vercel access token scoped to the LOCALI team).
+# Needs the repository secret VERCEL_TOKEN: a Vercel access token whose scope is the project
+# thabat-ms-website (or the whole LOCALI team). A token scoped to another project fails with "Project not found".
 name: Deploy to Vercel
 
 on:
@@ -34,9 +35,6 @@ jobs:
             echo "::error::Add the repository secret VERCEL_TOKEN (Settings > Secrets and variables > Actions)."
             exit 1
           fi
-
-      - name: Show which Vercel account the token belongs to
-        run: npx --yes vercel@63.1.2 whoami --token="$VERCEL_TOKEN"
 
       - name: Deploy to production
         run: npx --yes vercel@63.1.2 deploy --prod --yes --token="$VERCEL_TOKEN"
